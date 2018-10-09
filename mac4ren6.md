@@ -38,13 +38,6 @@
 
 ---
 
-## Changelog
-Date | Changes | Editor
----|---|---|
-100418|First draft|Tsun Hao
-
----
-
 ## Introduction
 
 Apple Files System (APFS) was introduced with macOS High Sierrea (iOS 10.3 and later), APFS is the properitay file system to replace HFS+ (MacOS Extneded). APFS is optimised for SSD storage with a primary focus on encrytion.
