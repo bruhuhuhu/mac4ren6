@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>MacForensics.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+	font-size: 14px;
+	padding: 0 12px;
+	line-height: 22px;
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	color: #4080D0;
+	text-decoration: none;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+h1 code,
+h2 code,
+h3 code,
+h4 code,
+h5 code,
+h6 code {
+	font-size: inherit;
+	line-height: auto;
+}
+
+a:hover {
+	color: #4080D0;
+	text-decoration: underline;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left: 5px solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 14px;
+	line-height: 19px;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+.mac code {
+	font-size: 12px;
+	line-height: 18px;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+/** Theming */
+
+.vscode-light,
+.vscode-light pre code {
+	color: rgb(30, 30, 30);
+}
+
+.vscode-dark,
+.vscode-dark pre code {
+	color: #DDD;
+}
+
+.vscode-high-contrast,
+.vscode-high-contrast pre code {
+	color: white;
+}
+
+.vscode-light code {
+	color: #A31515;
+}
+
+.vscode-dark code {
+	color: #D7BA7D;
+}
+
+.vscode-light pre:not(.hljs),
+.vscode-light code > div {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre:not(.hljs),
+.vscode-dark code > div {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre:not(.hljs),
+.vscode-high-contrast code > div {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+.vscode-light blockquote,
+.vscode-dark blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.vscode-high-contrast blockquote {
+	background: transparent;
+	border-color: #fff;
+}
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family:  "Meiryo", "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+</head>
+<body>
+<h1 id="mac-forensics-with-apple-file-system-apfs">Mac Forensics with Apple File System (APFS)</h1>
+<hr>
+<h2 id="table-of-content">Table of content</h2>
+<ul>
+<li><a href="#mac-forensics-with-apple-file-system-apfs">Mac Forensics with Apple File System (APFS)</a>
+<ul>
+<li><a href="#table-of-content">Table of content</a></li>
+<li><a href="#changelog">Changelog</a></li>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#apfs-notable-features">APFS notable features</a>
+<ul>
+<li><a href="#1-trim-command">1. TRIM command</a></li>
+<li><a href="#2-encryption">2. Encryption</a></li>
+</ul>
+</li>
+<li><a href="#acquisiton">Acquisiton</a>
+<ul>
+<li><a href="#1-static-acquisition">1. Static acquisition</a></li>
+<li><a href="#11-booting-into-macquisition">1.1 Booting into MacQuisition</a></li>
+<li><a href="#12-entering-case-info">1.2 Entering Case Info</a></li>
+<li><a href="#13-acquiring-a-non-filevault-encrypted-drive">1.3 Acquiring a non-FileVault encrypted drive</a></li>
+<li><a href="#14-acquiring-a-filevault-encrypted-drive">1.4 Acquiring a FileVault encrypted drive</a></li>
+<li><a href="#141-decrypting-the-drive">1.4.1 Decrypting the drive</a></li>
+<li><a href="#15-data-collection">1.5 Data collection</a></li>
+<li><a href="#16-image-device">1.6 Image device</a></li>
+<li><a href="#161-drive-selection">1.6.1 Drive selection</a></li>
+<li><a href="#162-image-formats-and-settings">1.6.2 Image formats and settings</a></li>
+<li><a href="#2-live-acquistion">2. Live acquistion</a></li>
+</ul>
+</li>
+<li><a href="#analysis">Analysis</a>
+<ul>
+<li><a href="#1-system-information">1. System Information</a></li>
+<li><a href="#2-fsevents-log">2. fsevents log</a></li>
+<li><a href="#21-useful-grep-searches-for-fsevent-analysis">2.1 Useful grep searches for fsevent analysis</a></li>
+<li><a href="#3-bash-history-and-other-shell-history">3. bash history and other shell history</a></li>
+<li><a href="#4-imessage">4. iMessage</a></li>
+<li><a href="#5-outlook-require-dmg-and-mac">5. Outlook (Require DMG and Mac)</a></li>
+<li><a href="#6-apple-system-log-asl">6. Apple System Log (ASL)</a></li>
+<li><a href="#7-browser-history">7. Browser history</a></li>
+<li><a href="#71-safari">7.1 Safari</a></li>
+<li><a href="#72-chrome">7.2 Chrome</a></li>
+<li><a href="#73-firefox">7.3 Firefox</a></li>
+<li><a href="#8-installation-log">8. Installation log</a></li>
+<li><a href="#9-ssh-host-file">9. SSH host file</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="changelog">Changelog</h2>
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Changes</th>
+<th>Editor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>100418</td>
+<td>First draft</td>
+<td>Tsun Hao</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="introduction">Introduction</h2>
+<p>Apple Files System (APFS) was introduced with macOS High Sierrea (iOS 10.3 and later), APFS is the properitay file system to replace HFS+ (MacOS Extneded). APFS is optimised for SSD storage with a primary focus on encrytion.</p>
+<hr>
+<h2 id="apfs-notable-features">APFS notable features</h2>
+<h3 id="1-trim-command">1. TRIM command</h3>
+<p>APFS uses TRIM command. TRIM command allows an the OS to inform the SSD which blocks of data are no longer considered in use and will be wiped internally.</p>
+<p>SSD drives implement Deterministic Read After Trim (DRAT) or Deterministic Zeroes After Trim (DZAT). DZAT returns all-zeroes immediately after the TRIM command released a certain data block, while DRAT will return the original data until it’s physically erased with the garbage collection algorithm. These 2 options have a strong influence on the data recovery probablility.</p>
+<h3 id="2-encryption">2.  Encryption</h3>
+<p>APFS suppers full disk encryptions natively and encrypts your data at the file system level if FileVault 2 is turned on.  For this reason, “unlocking” APFS volumes does not result in a special block device that can be read to acquire an unencrypted version of an APFS volume.  As such, analysis tools such as BlackLight is required to decrypt APFS file system metadata and data blocks on demand.</p>
+<hr>
+<h2 id="acquisiton">Acquisiton</h2>
+<p>This section details the process to acquire a Mac with Macqusition, including live systems.</p>
+<h3 id="1-static-acquisition">1. Static acquisition</h3>
+<h3 id="11-booting-into-macquisition">1.1 Booting into MacQuisition</h3>
+<p>To enter the boot menu of a Mac, hold on to option after pressing the power button. The boot manager should display shortly. Select <strong>MacQuisition 2018R1.2.</strong></p>
+<p><img src="BootManager.jpg" alt="BootManager"></p>
+<p>Should the Abnormal Shutdown notification shows up, select New Database</p>
+<p><img src="ChooseNewDB.jpg" alt="SelectDB"></p>
+<h3 id="12-entering-case-info">1.2 Entering Case Info</h3>
+<p>Case details tab will be shown after the system is booted up. Enter case information as per usual.</p>
+<p><img src="CaseInfo.jpg" alt="CaseInfo"></p>
+<p>Pay attention to the date tab as it does not defualt to GMT +8.</p>
+<p><img src="DateFormat.jpg" alt="DateFormat"></p>
+<h3 id="13-acquiring-a-non-filevault-encrypted-drive">1.3 Acquiring a non-FileVault encrypted drive</h3>
+<p>If a drive is not FileVault encrypted, the content of the exhibit should be visible under the Data Collection tab.</p>
+<p><img src="Datacollection.jpg" alt="DataCollectNotEncrypt"></p>
+<p>Additionally, Image Device tab will not show the APFS container as encrypted.</p>
+<p><img src="Physical.jpg" alt="Physical"></p>
+<h3 id="14-acquiring-a-filevault-encrypted-drive">1.4 Acquiring a FileVault encrypted drive</h3>
+<p>A FileVault 2 encrypted device will not display data under the Data Collection tab.</p>
+<p><img src="DataCollectionEncrypted.jpeg" alt="DataCollectEncrypted"></p>
+<h3 id="141-decrypting-the-drive">1.4.1 Decrypting the drive</h3>
+<p>To decrypt the drive, select Tools tab and click on the encrpyted drive. Enter either the password or recovery key will unlock the drive.</p>
+<p><img src="Password.png" alt="Password"></p>
+<p>The APFS container will display as encrpyted (unlocked) under the Image Device tab after successful decryption.</p>
+<p><img src="Select.jpeg" alt="PhysicalEncrypted"></p>
+<h3 id="15-data-collection">1.5 Data collection</h3>
+<p><strong>Data Collection is only available to non FileVault 2 encrypted drives.  Drives with FileVault 2 turned on will not display drive contents even after unlocking the drive.</strong></p>
+<p>Select the items of interest and begin the acquisiton.</p>
+<h3 id="16-image-device">1.6 Image device</h3>
+<h3 id="161-drive-selection">1.6.1 Drive selection</h3>
+<p><img src="Interface.jpg" alt="Interface"></p>
+<p><strong>To image the physical disk, select the disk0.</strong></p>
+<p><strong>Do not select disk1.</strong> If disk1 is selected for imaging, it will result with an image without mountable filesystems.</p>
+<p>Disk 1 is only a container created by MacOS to hold the exhibit's data.</p>
+<p><img src="NoMount.jpeg" alt="NoMount"></p>
+<p>If content of disk 1 is selected for imaging, MacQuisition will infrom that the partition cannot be read.</p>
+<p><img src="Encrypted.jpeg" alt="Encrypted"></p>
+<h3 id="162-image-formats-and-settings">1.6.2 Image formats and settings</h3>
+<p><img src="ImageFormat.jpg" alt="ImageFormat"></p>
+<p>MacQuisiton provides several image formats.</p>
+<ul>
+<li>To create an evidence that could be mounted on another Mac, choose DNG</li>
+<li>To create an evidence that is to be processed in BlackLight, choose E01 (empty block compression)</li>
+</ul>
+<p>Set segment size to 2GB and configure destination location. Imaging can begin afterwards.</p>
+<h3 id="2-live-acquistion">2. Live acquistion</h3>
+<p>Live acquition can be achieved if the exhibit is logged on to the desired user's profile. Live acquisition can be done regardless of the activation of FileVault 2.</p>
+<p>MacQuisiton will create an icon on the exhibit's desktop once MacQuisiton is inserted. Start the application and navigate to data collection tab to acquire items of interest.</p>
+<p><img src="LiveAcquisition.jpeg" alt="Live Data Collection"></p>
+<p>Live acquisiton is able to capture the live files, but <strong>certain system and user files will fail in collection due to FileValut 2 protection</strong>:</p>
+<p><img src="Error.jpeg" alt="Error"></p>
+<p>User Files</p>
+<ul>
+<li>Email - Native mail app</li>
+<li>Saved application state</li>
+<li>User Keychain</li>
+<li>User preference</li>
+</ul>
+<p>System Files</p>
+<ul>
+<li>OS Version</li>
+<li>Crontab (Scheduled jobs)</li>
+<li>Ipq (Unsure usage)</li>
+<li>Ipstat (Unsure usage)</li>
+</ul>
+<h2 id="analysis">Analysis</h2>
+<p>This section provides a list of locations for analysis and the data to lookout for. Please note that items closed in [SquareParentheses] should be replaced.</p>
+<h3 id="1-system-information">1. System Information</h3>
+<ul>
+<li>OS name and version
+Plist describing the installed Operating System</li>
+</ul>
+<pre class="hljs"><code><div>/System/Library/CoreServices/SystemVersion.plist
+</div></code></pre>
+<ul>
+<li>History of installed applications and updates</li>
+</ul>
+<pre class="hljs"><code><div>/Library/Receipts/InstallHistory.plist
+</div></code></pre>
+<ul>
+<li>Software Update: Plist describing last attempt and last successful attempt at updating OS X software</li>
+</ul>
+<pre class="hljs"><code><div>/Library/Preferences/com.apple.SoftwareUpdate.plist
+</div></code></pre>
+<ul>
+<li>Installation log
+Install date of system, as well as date of system and software updates</li>
+</ul>
+<pre class="hljs"><code><div>/var/log/install.log
+</div></code></pre>
+<h3 id="2-fsevents-log">2. fsevents log</h3>
+<p>Location of fsevent</p>
+<pre class="hljs"><code><div>- Data: /private/var/.fseventsd
+- System: /.fseventsd
+</div></code></pre>
+<p><strong>fsevent files are gzip files that has to be parsed</strong> by tools such as BlackLight or the script below.</p>
+<pre class="hljs"><code><div>https://github.com/dlcowen/FSEventsParser
+</div></code></pre>
+<p>fsevent log is one of the most comprehensive logs for Mac analysis that archives the file system changes. However, as fsevent log is flushed into the log file periodically, exact timestamp is not available.</p>
+<p>Below is a list of flags (activites) that could be captured from fsevent log.</p>
+<pre class="hljs"><code><div>• Created
+• Removed
+• Modified
+• Renamed
+• Permissions
+• Inode metadata
+• Finder information
+• Mount
+• Unmount
+• Last hard link removed
+• End of transaction
+• Document revisions
+</div></code></pre>
+<h3 id="21-useful-grep-searches-for-fsevent-analysis">2.1 Useful grep searches for fsevent analysis</h3>
+<p>Below is a list of keywords that could be useful for grep searches. Combine with .* (AND) and other operators to filter further.</p>
+<pre class="hljs"><code><div>- Trash activity: 'Users/*/.Trash/*'
+- User folders activity: 'Users/*/Documents/*’ OR 'Users/*/Downloads/*&quot; OR 'Users/*/Desktop/*'
+- Inrernet activity: 'Users/%/Library/Caches/Metadata/Safari/History/% OR 'Users/*/Library/ApplicationSupport/Google/Chrome/Default/Local Storage/*'
+- Mount event: &quot;mount&quot;
+- Terminal/Shell activity: &quot;/.bash_history&quot; OR any other shell history files
+</div></code></pre>
+<h3 id="3-bash-history-and-other-shell-history">3. bash history and other shell history</h3>
+<ul>
+<li>Terminal commands history</li>
+</ul>
+<pre class="hljs"><code><div>[UserAccount]/.bash_history
+</div></code></pre>
+<p>Mac supports other shells such as Zsh or Csh shell, look for other history files in the user's home directory</p>
+<h3 id="4-imessage">4. iMessage</h3>
+<p>iMessage database will require SQLite to be pasred out. The database could be found at the location below:</p>
+<pre class="hljs"><code><div>Users/[UserAccount]/Library/Messages/chat.db
+</div></code></pre>
+<h3 id="5-outlook-require-dmg-and-mac">5. Outlook (Require DMG and Mac)</h3>
+<p>The outlook stoage is in olm. format. The items are not parsed by BlackLight. Below is the O365 storage location:</p>
+<pre class="hljs"><code><div>/Users/[UserAccount]]/Library/Group Containers/UBF8T346G9.Office/Outlook/Outlook 15 Profiles/Main Profile/Messages
+</div></code></pre>
+<p>The profile can be replaced on another Mac. Restart outlook after the profile replacememnt. The desired user mailbox should be visible now.</p>
+<h3 id="6-apple-system-log-asl">6. Apple System Log (ASL)</h3>
+<p>Apple System Log is a daemon that manages and stores system log information. ASL logs are binary, must view with syslog or console on Mac or using blackLight.</p>
+<pre class="hljs"><code><div>Private/var/log/asl ,also outputs to /var/log/system/log
+</div></code></pre>
+<h3 id="7-browser-history">7. Browser history</h3>
+<p>Browser history could be parsed out with BlackLight. Below are some of the useful locations for analysis should BlackLight is not available.</p>
+<h3 id="71-safari">7.1 Safari</h3>
+<p>Plist listing files downloaded using Safari Browser</p>
+<pre class="hljs"><code><div>[UserAccount]/Library/Safari/Downloads.plist
+</div></code></pre>
+<p>Plist listing Safari web browsing history</p>
+<pre class="hljs"><code><div>[UserAccount]/Library/Safari/History.plist
+</div></code></pre>
+<h3 id="72-chrome">7.2 Chrome</h3>
+<p>Location for Chrome browser artefacts</p>
+<pre class="hljs"><code><div>/Library/Application Support/Google/Chrome/Default. 
+</div></code></pre>
+<h3 id="73-firefox">7.3 Firefox</h3>
+<p>Location for Firefox browser artefacts</p>
+<pre class="hljs"><code><div>/Library/Application Support/Firefox/Profiles/
+</div></code></pre>
+<h3 id="8-installation-log">8. Installation log</h3>
+<p>It contains install date of system, as well as date of system and software updates</p>
+<pre class="hljs"><code><div>/var/log/install.log
+</div></code></pre>
+<h3 id="9-ssh-host-file">9. SSH host file</h3>
+<p>SSH host file could be useful in identifying Virtual Private Server (VPS) services that might be accessed with the exhibit when cross exabined with the web cache. The host file could be located below</p>
+<pre class="hljs"><code><div>.ssh/known_hosts 
+</div></code></pre>
+
+</body>
+</html>
